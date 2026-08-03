@@ -1,0 +1,26 @@
+Metadata-Version: 2.4
+Name: agentmason
+Version: 0.1.0
+Summary: Enterprise-grade AI agent platform foundation
+Requires-Python: >=3.9
+License-File: LICENSE
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn[standard]>=0.30.0
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: pydantic-settings>=2.4.0
+Requires-Dist: sqlalchemy>=2.0.0
+Requires-Dist: psycopg[binary]>=3.2.0
+Requires-Dist: redis>=5.0.0
+Requires-Dist: alembic>=1.13.0
+Requires-Dist: pytest>=8.3.0
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: python-jose[cryptography]>=3.1.0
+Requires-Dist: structlog>=24.4.0
+Requires-Dist: opentelemetry-api>=1.27.0
+Requires-Dist: opentelemetry-sdk>=1.27.0
+Requires-Dist: langchain>=0.3.0
+Requires-Dist: langgraph>=0.2.0
+Requires-Dist: openai>=1.0.0
+Requires-Dist: anthropic>=0.37.0
+Requires-Dist: google-generativeai>=0.8.0
+Dynamic: license-file

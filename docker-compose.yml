@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://agentmason:agentmason@postgres:5432/agentmason
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: change-me
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: agentmason
+      POSTGRES_PASSWORD: agentmason
+      POSTGRES_DB: agentmason
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"

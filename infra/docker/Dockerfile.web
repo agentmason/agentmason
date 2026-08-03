@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+WORKDIR /app
+COPY apps/web/package.json ./package.json
+COPY apps/web/tsconfig.json ./tsconfig.json
+COPY apps/web/next.config.ts ./next.config.ts
+COPY apps/web/postcss.config.js ./postcss.config.js
+COPY apps/web/tailwind.config.ts ./tailwind.config.ts
+COPY apps/web/src ./src
+COPY apps/web/public ./public
+RUN npm install && npm run build
+
+EXPOSE 3000
+CMD ["npm", "run", "start"]
