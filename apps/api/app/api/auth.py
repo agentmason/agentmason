@@ -1,20 +1,23 @@
-from datetime import datetime, timedelta, timezone
-from typing import Any
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from apps.api.app.core.database import get_db
+from apps.api.app.core.security import create_access_token, hash_password, verify_password
+from apps.api.app.models.user import User
 
 router = APIRouter()
 
 
 class RegisterRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     name: str
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
@@ -31,33 +34,32 @@ class UserResponse(BaseModel):
     role: str = "user"
 
 
-users: dict[str, dict[str, Any]] = {}
-
-
-def _create_token(email: str) -> str:
-    return f"token-{email}-{datetime.now(timezone.utc).timestamp():.0f}"
-
-
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest) -> UserResponse:
-    if payload.email in users:
+def register(payload: RegisterRequest, db: Session = Depends(get_db)) -> UserResponse:
+    normalized_email = str(payload.email).strip().lower()
+    existing_user = db.scalar(select(User).where(User.email == normalized_email))
+    if existing_user is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    user = {
-        "id": f"user-{len(users) + 1}",
-        "email": str(payload.email),
-        "name": payload.name,
-        "role": "user",
-        "password": payload.password,
-    }
-    users[str(payload.email)] = user
-    return UserResponse(**{k: v for k, v in user.items() if k != "password"})
+    user = User(
+        email=normalized_email,
+        name=payload.name.strip(),
+        role="user",
+        password_hash=hash_password(payload.password),
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    return UserResponse(id=str(user.id), email=user.email, name=user.name, role=user.role)
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest) -> TokenResponse:
-    user = users.get(str(payload.email))
-    if not user or user["password"] != payload.password:
+def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
+    normalized_email = str(payload.email).strip().lower()
+    user = db.scalar(select(User).where(User.email == normalized_email))
+    if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    return TokenResponse(access_token=_create_token(str(payload.email)))
+    token = create_access_token(str(user.id))
+    return TokenResponse(access_token=token)

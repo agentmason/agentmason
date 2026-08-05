@@ -4,13 +4,12 @@ services:
       context: .
       dockerfile: infra/docker/Dockerfile
     environment:
-      DATABASE_URL: postgresql://agentmason:agentmason@postgres:5432/agentmason
+      DATABASE_URL: sqlite:////app/agentmason.db
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET_KEY: change-me
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
       - redis
       - qdrant
 

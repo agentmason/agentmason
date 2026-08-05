@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "AgentMason"
     environment: str = "development"
-    database_url: str = "postgresql://agentmason:agentmason@localhost:5432/agentmason"
+    database_url: str = "sqlite:///./agentmason.db"
     redis_url: str = "redis://localhost:6379/0"
     jwt_secret_key: str = "change-me"
     jwt_algorithm: str = "HS256"
