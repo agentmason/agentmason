@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from apps.api.app.api.auth import router as auth_router
+from apps.api.app.api.agents import router as agents_router
 from apps.api.app.api.me import router as me_router
 from apps.api.app.api.organizations import router as organizations_router
 from apps.api.app.core.database import engine
@@ -28,3 +29,4 @@ def health() -> dict[str, str]:
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(me_router, prefix="/me", tags=["me"])
 app.include_router(organizations_router, prefix="/organizations", tags=["organizations"])
+app.include_router(agents_router, prefix="/agents", tags=["agents"])

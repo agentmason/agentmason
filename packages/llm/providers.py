@@ -1,20 +1,28 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Optional
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
+
+from packages.llm.config import ProviderConfig
+from packages.llm.exceptions import LLMProviderError
 
 
-@dataclass(slots=True)
-class ProviderConfig:
-    provider: str
-    model: str
-    api_key: Optional[str] = None
-    endpoint: Optional[str] = None
-
-
-class LLMProvider:
+class LLMProvider(ABC):
     def __init__(self, config: ProviderConfig) -> None:
         self.config = config
 
-    async def complete(self, prompt: str, **kwargs: Any) -> str:
-        return f"[{self.config.provider}:{self.config.model}] {prompt}"
+    @abstractmethod
+    async def generate(self, messages: list[Dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def stream(self, messages: list[Dict[str, str]], **kwargs: Any) -> Any:
+        raise NotImplementedError
+
+
+class BaseLLMProvider(LLMProvider):
+    async def generate(self, messages: list[Dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        raise LLMProviderError("Provider does not implement generate")
+
+    async def stream(self, messages: list[Dict[str, str]], **kwargs: Any) -> Any:
+        raise LLMProviderError("Provider does not implement stream")

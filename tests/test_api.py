@@ -33,3 +33,26 @@ def test_duplicate_registration_is_rejected_case_insensitively() -> None:
 
     assert first_register.status_code == 201
     assert second_register.status_code == 400
+
+
+def test_agent_run_requires_authentication_and_returns_execution() -> None:
+    client = TestClient(app)
+    payload = {"email": f"{uuid4().hex}@example.com", "password": "StrongPass123!", "name": "Agent User"}
+    register = client.post("/auth/register", json=payload)
+    assert register.status_code == 201
+
+    login = client.post("/auth/login", json={"email": payload["email"], "password": payload["password"]})
+    assert login.status_code == 200
+    token = login.json()["access_token"]
+
+    run_response = client.post(
+        "/agents/run",
+        json={"agent_name": "business_assistant", "input": "Hello agent"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    assert run_response.status_code == 200
+    body = run_response.json()
+    assert body["status"] == "completed"
+    assert body["execution_id"]
+    assert isinstance(body["trace"], list)
