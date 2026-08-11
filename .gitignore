@@ -13,3 +13,6 @@ out/
 coverage/
 .DS_Store
 *.log
+
+# Local development database
+agentmason.db

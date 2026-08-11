@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 
 @dataclass(slots=True)
 class ProviderConfig:
     provider: str
     model: str
-    api_key: str | None = None
-    endpoint: str | None = None
+    api_key: Optional[str] = None
+    endpoint: Optional[str] = None
 
 
 class LLMProvider:
