@@ -6,6 +6,7 @@ from apps.api.app.models.integration import Integration
 from apps.api.app.models.execution import AgentExecution
 from apps.api.app.models.tool_execution import ToolExecution
 from apps.api.app.models.llm_usage import LLMUsage
+from apps.api.app.models.document import Document, DocumentChunk, DocumentStatus, DocumentSourceType
 
 __all__ = [
     "Base",
@@ -16,4 +17,8 @@ __all__ = [
     "AgentExecution",
     "ToolExecution",
     "LLMUsage",
+    "Document",
+    "DocumentChunk",
+    "DocumentStatus",
+    "DocumentSourceType",
 ]

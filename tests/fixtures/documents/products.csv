@@ -1,0 +1,12 @@
+Product,Category,Price,InStock,Description
+SmartAgent Pro,Software,2999,true,Enterprise-grade AI agent framework
+AgentMason Community,Software,0,true,Open-source AI agent platform
+Professional Services,Services,5000,true,Implementation and consulting
+Training Program,Services,1500,true,Hands-on team training
+API Key Management,Feature,199,true,Secure API key storage and rotation
+Custom Integration,Services,3000,true,Integration with your systems
+Multi-tenant Support,Feature,499,true,Support for multiple organizations
+Advanced RAG,Feature,799,true,Retrieval-augmented generation capabilities
+Vector Search,Feature,399,true,Semantic similarity search
+24/7 Support,Services,2000,true,Priority technical support
+Cloud Deployment,Services,4000,true,Kubernetes deployment assistance

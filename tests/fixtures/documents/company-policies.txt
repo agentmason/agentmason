@@ -1,0 +1,73 @@
+Company Policies
+
+## Security Policy
+
+All employees must follow these security guidelines:
+
+1. Password Requirements
+   - Minimum 12 characters
+   - Must include uppercase, lowercase, numbers, and special characters
+   - Change password every 90 days
+   - Never share passwords
+
+2. Data Protection
+   - Encrypt all sensitive company data
+   - Use VPN for remote connections
+   - Lock computer when away from desk
+   - Report any security incidents immediately
+
+3. Device Management
+   - Company devices must have full disk encryption
+   - Install all security updates within 7 days
+   - Enable antivirus and firewall
+   - Physical devices must not be left unattended
+
+## Expense Policy
+
+### Reimbursable Expenses
+
+Employees can be reimbursed for:
+- Business travel (flights, hotels, ground transportation)
+- Client entertainment and meals ($75 per day limit)
+- Conference and training expenses
+- Office supplies for remote work
+
+### Submission Process
+
+1. Submit expense report within 30 days
+2. Attach receipts for all expenses over $25
+3. Include business purpose and date
+4. Get manager approval
+5. Finance will process within 5 business days
+
+## Internet and Email Policy
+
+### Email Usage
+
+- Email is for business purposes only
+- Professional communication standards apply
+- Company monitors all email traffic
+- Emails are company property
+
+### Internet Usage
+
+- No personal streaming or downloads
+- No illegal content or websites
+- Company monitors internet traffic
+- Excessive personal use may result in disciplinary action
+
+## Attendance and Punctuality
+
+- Normal business hours are 9 AM to 5 PM
+- Employees must arrive on time
+- Use PTO for planned absences
+- Notify manager of unexpected absences within 30 minutes
+
+## Performance Reviews
+
+- Annual performance reviews in December
+- Mid-year check-ins in June
+- Reviews based on job description and goals
+- Results impact salary adjustments and promotions
+
+Contact Management with any policy questions.

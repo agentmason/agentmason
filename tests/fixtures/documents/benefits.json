@@ -1,0 +1,30 @@
+{
+  "company": {
+    "name": "AgentMason",
+    "founded": 2023,
+    "headquarters": "San Francisco, CA",
+    "employees": 150
+  },
+  "benefits": {
+    "retirement": {
+      "plan": "401(k)",
+      "employer_match": "4% of salary",
+      "vesting": "4-year cliff"
+    },
+    "wellness": {
+      "gym_reimbursement": "$50/month",
+      "mental_health_counseling": "Free EAP program",
+      "health_screening": "Annual health check"
+    },
+    "commuter": {
+      "transit_benefit": "$315/month",
+      "parking_benefit": "$250/month",
+      "electric_vehicle_charging": "Free at headquarters"
+    }
+  },
+  "vacation_policy": {
+    "days_per_year": 20,
+    "accrual_period": "monthly",
+    "carryover_max": 10
+  }
+}
