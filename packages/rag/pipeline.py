@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 
-@dataclass(slots=True)
+@dataclass
 class RAGDocument:
     id: str
     content: str

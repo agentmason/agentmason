@@ -4,21 +4,21 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-@dataclass(slots=True)
+@dataclass
 class PromptTemplate:
     name: str
     template: str
     version: int = 1
 
 
-@dataclass(slots=True)
+@dataclass
 class PromptVersion:
     id: str
     template: PromptTemplate
     content: str
 
 
-@dataclass(slots=True)
+@dataclass
 class PromptStore:
     templates: dict[str, PromptTemplate] = field(default_factory=dict)
     versions: list[PromptVersion] = field(default_factory=list)
