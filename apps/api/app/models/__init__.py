@@ -7,6 +7,8 @@ from apps.api.app.models.execution import AgentExecution
 from apps.api.app.models.tool_execution import ToolExecution
 from apps.api.app.models.llm_usage import LLMUsage
 from apps.api.app.models.document import Document, DocumentChunk, DocumentStatus, DocumentSourceType
+from apps.api.app.models.memory import BusinessMemory, MemoryCategory, MemoryStatus, MemorySource
+from apps.api.app.models.graph import GraphEntity, GraphRelationship, EntityType, RelationshipType
 
 __all__ = [
     "Base",
@@ -23,4 +25,12 @@ __all__ = [
     "DocumentChunk",
     "DocumentStatus",
     "DocumentSourceType",
+    "BusinessMemory",
+    "MemoryCategory",
+    "MemoryStatus",
+    "MemorySource",
+    "GraphEntity",
+    "GraphRelationship",
+    "EntityType",
+    "RelationshipType",
 ]

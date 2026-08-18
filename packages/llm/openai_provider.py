@@ -7,9 +7,17 @@ import openai
 from openai import OpenAIError
 
 try:
-    from openai import AuthenticationError, InvalidRequestError, RateLimitError, Timeout
+    from openai import AuthenticationError, RateLimitError, APITimeoutError, BadRequestError
+    InvalidRequestError = BadRequestError
+    Timeout = APITimeoutError
 except ImportError:
-    from openai.error import AuthenticationError, InvalidRequestError, RateLimitError, Timeout
+    try:
+        from openai import AuthenticationError, InvalidRequestError, RateLimitError, Timeout
+    except ImportError:
+        AuthenticationError = OpenAIError
+        InvalidRequestError = OpenAIError
+        RateLimitError = OpenAIError
+        Timeout = OpenAIError
 
 from packages.llm.config import ProviderConfig
 from packages.llm.exceptions import LLMAuthenticationError, LLMInvalidRequestError, LLMProviderError, LLMRateLimitError, LLMTimeoutError

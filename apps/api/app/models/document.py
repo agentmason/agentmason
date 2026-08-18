@@ -5,7 +5,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, List, Optional
 from uuid import uuid4
 
-from sqlalchemy import DateTime, Enum as SQLEnum, Float, Integer, String, Text
+from sqlalchemy import DateTime, Enum as SQLEnum, Float, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from apps.api.app.models.base import Base
@@ -59,7 +59,7 @@ class Document(Base):
         default=DocumentSourceType.UPLOADED,
         nullable=False
     )
-    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", default=None, nullable=True)
+    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", JSON, default=None, nullable=True)
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_by: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
@@ -91,13 +91,13 @@ class DocumentChunk(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
     organization_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
-    document_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+    document_id: Mapped[str] = mapped_column(String(36), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False, index=True)
     chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     token_count: Mapped[int] = mapped_column(Integer, nullable=True)
     embedding: Mapped[Optional[bytes]] = mapped_column(nullable=True)
     embedding_model: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", default=None, nullable=True)
+    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", JSON, default=None, nullable=True)
     similarity_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -46,7 +46,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 @router.get("/", response_model=list[OrganizationResponse])
 def list_organizations(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)) -> list[OrganizationResponse]:
     organizations = db.scalars(select(Organization)).all()
-    return [OrganizationResponse(id=str(org.id), name=org.name, slug=org.slug, metadata=org.metadata) for org in organizations]
+    return [OrganizationResponse(id=str(org.id), name=org.name, slug=org.slug, metadata=org.metadata_payload) for org in organizations]
 
 
 @router.post("/", response_model=OrganizationResponse, status_code=status.HTTP_201_CREATED)
@@ -57,6 +57,12 @@ def create_organization(payload: CreateOrganizationRequest, db: Session = Depend
 
     organization = Organization(name=payload.name.strip(), slug=payload.slug.strip(), metadata_payload=payload.metadata)
     db.add(organization)
+    db.flush()
+
+    # Auto-create membership for the creating user
+    from apps.api.app.models.membership import Membership
+    membership = Membership(user_id=current_user.id, organization_id=organization.id, role="admin")
+    db.add(membership)
     db.commit()
     db.refresh(organization)
-    return OrganizationResponse(id=str(organization.id), name=organization.name, slug=organization.slug, metadata=organization.metadata)
+    return OrganizationResponse(id=str(organization.id), name=organization.name, slug=organization.slug, metadata=organization.metadata_payload)

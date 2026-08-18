@@ -109,3 +109,68 @@ class ContextBuilder:
             }
             citations.append(citation)
         return citations
+
+    @staticmethod
+    def build_memory_context(memories: list) -> str:
+        """
+        Build context from business memories for inclusion in prompts.
+        
+        Args:
+            memories: List of BusinessMemory objects
+            
+        Returns:
+            Formatted memory context string
+        """
+        if not memories:
+            return ""
+
+        parts = ["# Relevant Business Memory\n"]
+        for i, memory in enumerate(memories, 1):
+            category = memory.category.value if hasattr(memory.category, 'value') else memory.category
+            parts.append(f"\n[{category.replace('_', ' ').title()}] {memory.title}")
+            parts.append(f"  {memory.content}")
+            if memory.source_reference:
+                parts.append(f"  Source: {memory.source_reference}")
+            parts.append("")
+
+        parts.append("=" * 40)
+        parts.append("End of Business Memory\n")
+        return "\n".join(parts)
+
+    @staticmethod
+    def build_combined_context(
+        user_query: str,
+        chunks: list[RetrievedChunk] = None,
+        memories: list = None,
+        graph_context: list[dict] = None,
+        system_instructions: str = "",
+    ) -> str:
+        """
+        Build a combined prompt with RAG chunks, business memory, and graph context.
+        """
+        prompt_parts = []
+
+        if system_instructions:
+            prompt_parts.append(system_instructions)
+            prompt_parts.append("\n" + "=" * 40 + "\n")
+
+        if memories:
+            prompt_parts.append(ContextBuilder.build_memory_context(memories))
+
+        if chunks:
+            prompt_parts.append(ContextBuilder.build_context(chunks))
+
+        if graph_context:
+            prompt_parts.append("\n# Relevant Business Relationships\n")
+            for item in graph_context:
+                prompt_parts.append(f"- {item.get('name', 'Unknown')} ({item.get('entity_type', '')}) "
+                                   f"[via: {item.get('via_relationship', 'related')}]")
+            prompt_parts.append("\n" + "=" * 40 + "\n")
+
+        if not chunks and not memories and not graph_context:
+            prompt_parts.append("Note: No additional business context available for this query.")
+
+        prompt_parts.append("\nUser Query:")
+        prompt_parts.append(user_query)
+
+        return "\n".join(prompt_parts)
