@@ -189,8 +189,10 @@ async def list_documents(
             .limit(limit)
         ).all()
 
+        from sqlalchemy import func
         total = db.scalar(
-            select(len(Document))
+            select(func.count())
+            .select_from(Document)
             .where(Document.organization_id == organization_id)
         )
 

@@ -7,6 +7,8 @@ from apps.api.app.api.me import router as me_router
 from apps.api.app.api.organizations import router as organizations_router
 from apps.api.app.api.knowledge import router as knowledge_router
 from apps.api.app.api.integrations import router as integrations_router
+from apps.api.app.api.memory import router as memory_router
+from apps.api.app.api.graph import router as graph_router
 from apps.api.app.core.database import engine
 from apps.api.app.models import Base
 
@@ -34,3 +36,5 @@ app.include_router(organizations_router, prefix="/organizations", tags=["organiz
 app.include_router(agents_router, prefix="/agents", tags=["agents"])
 app.include_router(knowledge_router, prefix="/api/knowledge", tags=["knowledge"])
 app.include_router(integrations_router, prefix="/api/integrations", tags=["integrations"])
+app.include_router(memory_router, prefix="/api/memory", tags=["memory"])
+app.include_router(graph_router, prefix="/api/graph", tags=["graph"])
