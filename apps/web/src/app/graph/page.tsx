@@ -146,14 +146,14 @@ export default function GraphPage() {
     <main className="mx-auto min-h-screen max-w-7xl px-6 py-12">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-semibold text-white">Business Graph</h1>
-          <p className="mt-1 text-slate-400">
+          <h1 className="text-3xl font-semibold text-slate-900">Business Graph</h1>
+          <p className="mt-1 text-slate-500">
             Entities and relationships in your business ({total} entities)
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="rounded-lg bg-cyan-600 px-4 py-2 font-medium text-white hover:bg-cyan-500"
+          className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 font-medium text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
         >
           + Add Entity
         </button>
@@ -166,12 +166,12 @@ export default function GraphPage() {
           placeholder="Search entities..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+          className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         />
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-white focus:border-cyan-500 focus:outline-none"
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         >
           <option value="">All Types</option>
           {entityTypes.map((t) => (
@@ -182,18 +182,18 @@ export default function GraphPage() {
 
       {/* Create Modal */}
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <form
             onSubmit={handleCreate}
-            className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-900 p-6"
+            className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-xl"
           >
-            <h2 className="mb-4 text-xl font-semibold text-white">Add Entity</h2>
+            <h2 className="mb-4 text-xl font-semibold text-slate-900">Add Entity</h2>
             <div className="mb-4">
-              <label className="mb-1 block text-sm text-slate-400">Type</label>
+              <label className="mb-1 block text-sm text-slate-500">Type</label>
               <select
                 value={newType}
                 onChange={(e) => setNewType(e.target.value)}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800"
               >
                 {entityTypes.map((t) => (
                   <option key={t} value={t}>{t.replace('_', ' ')}</option>
@@ -201,23 +201,23 @@ export default function GraphPage() {
               </select>
             </div>
             <div className="mb-4">
-              <label className="mb-1 block text-sm text-slate-400">Name</label>
+              <label className="mb-1 block text-sm text-slate-500">Name</label>
               <input
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 required
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800"
                 placeholder="e.g. Acme Corp"
               />
             </div>
             <div className="mb-4">
-              <label className="mb-1 block text-sm text-slate-400">Description</label>
+              <label className="mb-1 block text-sm text-slate-500">Description</label>
               <textarea
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
                 rows={3}
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-white"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800"
                 placeholder="Optional description"
               />
             </div>
@@ -225,13 +225,13 @@ export default function GraphPage() {
               <button
                 type="button"
                 onClick={() => setShowCreate(false)}
-                className="rounded-lg border border-slate-700 px-4 py-2 text-slate-300 hover:bg-slate-800"
+                className="rounded-lg border border-slate-300 px-4 py-2 text-slate-600 hover:bg-slate-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="rounded-lg bg-cyan-600 px-4 py-2 font-medium text-white hover:bg-cyan-500"
+                className="rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-2 font-medium text-white hover:shadow-lg hover:shadow-purple-500/25 transition-all"
               >
                 Create Entity
               </button>
@@ -245,11 +245,11 @@ export default function GraphPage() {
         {/* Entity List */}
         <div className="lg:col-span-2">
           {loading ? (
-            <p className="text-slate-400">Loading...</p>
+            <p className="text-slate-500">Loading...</p>
           ) : entities.length === 0 ? (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-12 text-center">
-              <p className="text-lg text-slate-400">No business entities yet.</p>
-              <p className="mt-2 text-sm text-slate-500">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-12 text-center">
+              <p className="text-lg text-slate-500">No business entities yet.</p>
+              <p className="mt-2 text-sm text-slate-400">
                 Add entities to build your business graph.
               </p>
             </div>
@@ -259,10 +259,10 @@ export default function GraphPage() {
                 <div
                   key={entity.id}
                   onClick={() => handleSelectEntity(entity)}
-                  className={`cursor-pointer rounded-xl border p-4 transition ${
+                  className={`cursor-pointer rounded-xl border p-4 transition shadow-sm ${
                     selectedEntity?.id === entity.id
-                      ? 'border-cyan-500 bg-slate-800/80'
-                      : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'
+                      ? 'border-blue-500 bg-blue-50/50 shadow-md'
+                      : 'border-slate-200 bg-white hover:border-blue-300 hover:shadow-md'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -272,7 +272,7 @@ export default function GraphPage() {
                         style={{ backgroundColor: TYPE_COLORS[entity.entity_type] || '#64748b' }}
                       />
                       <div>
-                        <h3 className="font-medium text-white">{entity.name}</h3>
+                        <h3 className="font-medium text-slate-900">{entity.name}</h3>
                         <span className="text-xs text-slate-500">
                           {entity.entity_type.replace('_', ' ')}
                         </span>
@@ -280,13 +280,13 @@ export default function GraphPage() {
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(entity.id); }}
-                      className="text-xs text-slate-600 hover:text-red-400"
+                      className="text-xs text-slate-400 hover:text-red-500"
                     >
                       Delete
                     </button>
                   </div>
                   {entity.description && (
-                    <p className="mt-2 text-sm text-slate-400">{entity.description}</p>
+                    <p className="mt-2 text-sm text-slate-500">{entity.description}</p>
                   )}
                 </div>
               ))}
@@ -297,22 +297,22 @@ export default function GraphPage() {
         {/* Detail Panel */}
         <div className="lg:col-span-1">
           {selectedEntity ? (
-            <div className="sticky top-6 rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+            <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
                 <div
                   className="h-4 w-4 rounded-full"
                   style={{ backgroundColor: TYPE_COLORS[selectedEntity.entity_type] || '#64748b' }}
                 />
-                <h2 className="text-lg font-semibold text-white">{selectedEntity.name}</h2>
+                <h2 className="text-lg font-semibold text-slate-900">{selectedEntity.name}</h2>
               </div>
               <p className="mb-2 text-xs text-slate-500 uppercase">
                 {selectedEntity.entity_type.replace('_', ' ')}
               </p>
               {selectedEntity.description && (
-                <p className="mb-4 text-sm text-slate-400">{selectedEntity.description}</p>
+                <p className="mb-4 text-sm text-slate-500">{selectedEntity.description}</p>
               )}
 
-              <h3 className="mb-2 mt-4 text-sm font-medium text-slate-300">
+              <h3 className="mb-2 mt-4 text-sm font-medium text-slate-700">
                 Relationships ({relationships.length})
               </h3>
               {relationships.length === 0 ? (
@@ -322,19 +322,19 @@ export default function GraphPage() {
                   {relationships.map((rel) => (
                     <div
                       key={rel.relationship_id}
-                      className="rounded-lg border border-slate-800 bg-slate-800/50 p-3"
+                      className="rounded-lg border border-slate-200 bg-slate-50 p-3"
                     >
                       <div className="flex items-center gap-2 text-xs">
                         <span className="text-slate-500">
                           {rel.direction === 'outgoing' ? '→' : '←'}
                         </span>
-                        <span className="font-medium text-cyan-400">
+                        <span className="font-medium text-blue-600">
                           {rel.relationship_type.replace('_', ' ')}
                         </span>
                       </div>
                       {rel.connected_entity && (
                         <p
-                          className="mt-1 cursor-pointer text-sm text-white hover:text-cyan-300"
+                          className="mt-1 cursor-pointer text-sm text-slate-800 hover:text-blue-600"
                           onClick={() => {
                             const found = entities.find(e => e.id === rel.connected_entity!.id);
                             if (found) handleSelectEntity(found);
@@ -352,8 +352,8 @@ export default function GraphPage() {
               )}
             </div>
           ) : (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center">
-              <p className="text-sm text-slate-500">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+              <p className="text-sm text-slate-400">
                 Select an entity to see its relationships
               </p>
             </div>

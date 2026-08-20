@@ -1,0 +1,290 @@
+"""Orchestration models for Phase 7: Multi-Agent Orchestration."""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, List, Optional
+from uuid import uuid4
+
+from sqlalchemy import (
+    DateTime, Enum as SQLEnum, Float, Integer, String, Text,
+    Boolean, JSON, ForeignKey,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from apps.api.app.models.base import Base
+
+
+# --- Enums ---
+
+class AgentStatus(str, Enum):
+    """Status of a specialized agent."""
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    DEPRECATED = "deprecated"
+
+
+class AgentRiskLevel(str, Enum):
+    """Risk level classification for agents."""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class OrchestrationStatus(str, Enum):
+    """Status of an orchestration execution."""
+    PLANNING = "planning"
+    EXECUTING = "executing"
+    WAITING_FOR_APPROVAL = "waiting_for_approval"
+    MERGING_RESULTS = "merging_results"
+    RESOLVING_CONFLICTS = "resolving_conflicts"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+
+class AgentTaskStatus(str, Enum):
+    """Status of an individual agent task."""
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    TIMED_OUT = "timed_out"
+
+
+class EvidenceType(str, Enum):
+    """Type of evidence in agent findings."""
+    FACT = "fact"
+    INFERENCE = "inference"
+    RECOMMENDATION = "recommendation"
+    ASSUMPTION = "assumption"
+
+
+class ConflictResolutionStrategy(str, Enum):
+    """Strategy used to resolve conflicts."""
+    EVIDENCE_WEIGHT = "evidence_weight"
+    CONFIDENCE_RANK = "confidence_rank"
+    EXPERTISE_PRIORITY = "expertise_priority"
+    HUMAN_REVIEW = "human_review"
+    POLICY_OVERRIDE = "policy_override"
+
+
+# --- Models ---
+
+class SpecializedAgent(Base):
+    """A registered specialized agent with capabilities and permissions."""
+    __tablename__ = "specialized_agents"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    organization_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    agent_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+
+    # Capabilities this agent supports
+    capabilities: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Tools this agent is allowed to use
+    allowed_tools: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Data sources the agent can access
+    allowed_data_sources: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Permissions: list of {action, resource, constraint}
+    permissions: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Supported task types
+    supported_tasks: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Model configuration
+    model_config_data: Mapped[Optional[Dict]] = mapped_column("model_config", JSON, nullable=True)
+
+    # System prompt template
+    system_prompt: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Risk level
+    risk_level: Mapped[AgentRiskLevel] = mapped_column(
+        SQLEnum(AgentRiskLevel), default=AgentRiskLevel.MEDIUM, nullable=False
+    )
+
+    # Status & versioning
+    status: Mapped[AgentStatus] = mapped_column(
+        SQLEnum(AgentStatus), default=AgentStatus.ACTIVE, nullable=False, index=True
+    )
+    version: Mapped[str] = mapped_column(String(50), default="1.0.0", nullable=False)
+
+    # Metadata
+    created_by: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
+    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    # Relationships
+    tasks: Mapped[list["AgentTask"]] = relationship(
+        "AgentTask", back_populates="agent", cascade="all, delete-orphan"
+    )
+
+
+class OrchestrationExecution(Base):
+    """A multi-agent orchestration execution."""
+    __tablename__ = "orchestration_executions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    organization_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+    user_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+
+    # The user's original objective
+    objective: Mapped[str] = mapped_column(Text, nullable=False)
+
+    # Execution plan generated by orchestrator
+    plan: Mapped[Optional[Dict]] = mapped_column(JSON, nullable=True)
+
+    # Status
+    status: Mapped[OrchestrationStatus] = mapped_column(
+        SQLEnum(OrchestrationStatus), default=OrchestrationStatus.PLANNING, nullable=False, index=True
+    )
+
+    # Final output
+    final_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    final_recommendation: Mapped[Optional[Dict]] = mapped_column(JSON, nullable=True)
+    final_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
+    # Conflicts found and resolution details
+    conflicts: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    conflict_resolution: Mapped[Optional[Dict]] = mapped_column(JSON, nullable=True)
+
+    # Linked Phase 6 workflow (if actions required)
+    workflow_execution_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
+
+    # Cost tracking
+    total_token_usage: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    total_tool_calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    total_llm_calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    total_agent_tasks: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    # Error
+    error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Metadata
+    metadata_payload: Mapped[Optional[Dict]] = mapped_column("metadata", JSON, nullable=True)
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    # Relationships
+    tasks: Mapped[list["AgentTask"]] = relationship(
+        "AgentTask", back_populates="orchestration", cascade="all, delete-orphan",
+        order_by="AgentTask.execution_order"
+    )
+    communications: Mapped[list["AgentCommunication"]] = relationship(
+        "AgentCommunication", back_populates="orchestration", cascade="all, delete-orphan",
+        order_by="AgentCommunication.created_at"
+    )
+
+
+class AgentTask(Base):
+    """A task delegated to a specialized agent within an orchestration."""
+    __tablename__ = "agent_tasks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    orchestration_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("orchestration_executions.id", ondelete="CASCADE"),
+        nullable=False, index=True
+    )
+    agent_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("specialized_agents.id"),
+        nullable=False, index=True
+    )
+    organization_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+
+    # Task definition
+    objective: Mapped[str] = mapped_column(Text, nullable=False)
+    context: Mapped[Optional[Dict]] = mapped_column(JSON, nullable=True)
+    expected_output_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    capabilities_required: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Execution ordering: tasks with same order run in parallel
+    execution_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    depends_on: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Status
+    status: Mapped[AgentTaskStatus] = mapped_column(
+        SQLEnum(AgentTaskStatus), default=AgentTaskStatus.PENDING, nullable=False, index=True
+    )
+
+    # Results
+    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    findings: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    recommendations: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    evidence: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    risks: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    required_actions: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+    sources: Mapped[Optional[List]] = mapped_column(JSON, nullable=True)
+
+    # Cost tracking
+    token_usage: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tool_calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    llm_calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    # Error
+    error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Timing
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    # Relationships
+    orchestration: Mapped["OrchestrationExecution"] = relationship(
+        "OrchestrationExecution", back_populates="tasks"
+    )
+    agent: Mapped["SpecializedAgent"] = relationship(
+        "SpecializedAgent", back_populates="tasks"
+    )
+
+
+class AgentCommunication(Base):
+    """Structured communication between agents during orchestration."""
+    __tablename__ = "agent_communications"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    orchestration_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("orchestration_executions.id", ondelete="CASCADE"),
+        nullable=False, index=True
+    )
+    organization_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+
+    # Source and target agents
+    from_agent_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    to_agent_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)  # None = broadcast to orchestrator
+
+    # Communication content
+    message_type: Mapped[str] = mapped_column(String(100), nullable=False)  # finding, question, dependency, result
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    structured_data: Mapped[Optional[Dict]] = mapped_column(JSON, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    orchestration: Mapped["OrchestrationExecution"] = relationship(
+        "OrchestrationExecution", back_populates="communications"
+    )
