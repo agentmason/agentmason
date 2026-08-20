@@ -18,6 +18,7 @@ apps/api/app/api/knowledge.py
 apps/api/app/api/me.py
 apps/api/app/api/memory.py
 apps/api/app/api/organizations.py
+apps/api/app/api/workflows.py
 apps/api/app/core/config.py
 apps/api/app/core/database.py
 apps/api/app/core/security.py
@@ -33,6 +34,7 @@ apps/api/app/models/memory.py
 apps/api/app/models/organization.py
 apps/api/app/models/tool_execution.py
 apps/api/app/models/user.py
+apps/api/app/models/workflow.py
 packages/agents/__init__.py
 packages/agents/base.py
 packages/agents/business_assistant.py
@@ -89,7 +91,19 @@ packages/tools/registry.py
 packages/tools/search_knowledge.py
 packages/tools/text_analysis.py
 packages/vectorstore/__init__.py
+packages/workflows/__init__.py
+packages/workflows/approval.py
+packages/workflows/audit.py
+packages/workflows/conditions.py
+packages/workflows/cost.py
+packages/workflows/engine.py
+packages/workflows/planner.py
+packages/workflows/risk.py
+packages/workflows/states.py
+packages/workflows/templates.py
 tests/test_api.py
 tests/test_document_parsing.py
+tests/test_full_application.py
 tests/test_memory_graph.py
 tests/test_rag.py
+tests/test_workflows.py

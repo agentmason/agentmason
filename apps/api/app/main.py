@@ -9,6 +9,9 @@ from apps.api.app.api.knowledge import router as knowledge_router
 from apps.api.app.api.integrations import router as integrations_router
 from apps.api.app.api.memory import router as memory_router
 from apps.api.app.api.graph import router as graph_router
+from apps.api.app.api.workflows import router as workflows_router
+from apps.api.app.api.orchestration import router as orchestration_router
+from apps.api.app.api.dogfood import router as dogfood_router
 from apps.api.app.core.database import engine
 from apps.api.app.models import Base
 
@@ -38,3 +41,6 @@ app.include_router(knowledge_router, prefix="/api/knowledge", tags=["knowledge"]
 app.include_router(integrations_router, prefix="/api/integrations", tags=["integrations"])
 app.include_router(memory_router, prefix="/api/memory", tags=["memory"])
 app.include_router(graph_router, prefix="/api/graph", tags=["graph"])
+app.include_router(workflows_router, prefix="/api/workflows", tags=["workflows"])
+app.include_router(orchestration_router, prefix="/api/orchestration", tags=["orchestration"])
+app.include_router(dogfood_router, prefix="/api/business", tags=["business"])
